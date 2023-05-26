@@ -24,11 +24,11 @@ jobs:
       - name: Install dependencies
         run: pip install coverage pylint
 
-      - name: Build and test
+      - name: Run tests
         run: |
-          python main.py
           coverage run --source=. test.py
           coverage report -m > coverage_report.txt
+          pylint test.py > pylint_report.txt
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
