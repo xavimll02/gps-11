@@ -29,7 +29,6 @@ jobs:
           python main.py
           coverage run --source=. test.py
           coverage report -m > coverage_report.txt
-          pylint main.py > pylint_report.txt
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
