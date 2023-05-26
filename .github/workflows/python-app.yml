@@ -1,19 +1,40 @@
-image: python:latest
+name: Python CI
 
-stages:
-  - build
-  - test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
-build:
-  stage: build
-  script:
-    - echo "Construyendo el proyecto..."
-    - pip install -r requirements.txt
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
 
-test:
-  stage: test
-  script:
-    - echo "Testeando el proyecto..."
-    - pylint test.py
-    - python test.py
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pip install coverage pylint
+
+      - name: Build and test
+        run: |
+          python main.py
+          coverage run --source=. test.py
+          coverage report -m > coverage_report.txt
+          pylint main.py > pylint_report.txt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Coverage and Pylint Reports
+          path: |
+            coverage_report.txt
+            pylint_report.txt
